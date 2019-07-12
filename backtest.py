@@ -65,4 +65,4 @@ def alpha(df):
         sums=np.sum(total_ret.iloc[i,:].values)
         total_ret['pnl'].iloc[i] = sums
     
-    total_ret['pnl'][64:].cumsum().plot()
+    total_ret['pnl'][2:].cumsum().plot()

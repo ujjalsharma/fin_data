@@ -40,23 +40,33 @@ def divide(df1, df2):
 
 # Alpha code
 def alpha(df):
-    df = df.fillna(0)
+    df.fillna(0, inplace=True)
     alpha = df.copy(deep=True)
     return_df = df.copy(deep=True)
     total_ret = df.copy(deep=True)
+    price_df = CLOSE.copy(deep=True)
+    turnover_df = df.copy(deep=True)
     
+    # Calculate value invested each day
     for i in range(len(df)):
         sums=np.sum(alpha.iloc[i,:].values)
         alpha.iloc[i, :] = alpha.iloc[i, :]/sums
-    
-    for i in range(1,len(df)):
-        return_df.iloc[i, :] = return_df.iloc[i, :]-return_df.iloc[i-1, :]
-    
     alpha = alpha * 20000000
     
+    #calculating the change in stock price each day
     for i in range(1,len(df)):
-        total_ret.iloc[i,:] = alpha.iloc[i,:]*return_df.iloc[i,:]
+        return_df.iloc[i, :] = (price_df.iloc[i, :]-price_df.iloc[i-1, :])/price_df.iloc[i-1, :]
+    return_df.fillna(0, inplace=True)
     
+    #Calculating trading value each day
+    for i in range(1,len(df)):
+        turnover_df.iloc[i,:] = alpha.iloc[i,:]-alpha.iloc[i-1,:]
+    
+    #Calculating returns for each day
+    for i in range(1,len(df)):
+        total_ret.iloc[i,:] = return_df.iloc[i,:]*turnover_df.iloc[i,:]
+    
+    #Total pnl each day
     total_ret['pnl'] = 0
     for i in range(1,len(df)):
         sums=np.sum(total_ret.iloc[i,:].values)

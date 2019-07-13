@@ -45,23 +45,20 @@ def alpha(df):
     return_df = df.copy(deep=True)
     total_ret = df.copy(deep=True)
     
-    alpha['sum'] = 0
-    
-    for i in range(2590):
+    for i in range(len(df)):
         sums=np.sum(alpha.iloc[i,:].values)
-        alpha['sum'].iloc[i] = sums
         alpha.iloc[i, :] = alpha.iloc[i, :]/sums
     
-    for i in range(1,2590):
+    for i in range(1,len(df)):
         return_df.iloc[i, :] = return_df.iloc[i, :]-return_df.iloc[i-1, :]
     
     alpha = alpha * 20000000
     
-    for i in range(1,2590):
+    for i in range(1,len(df)):
         total_ret.iloc[i,:] = alpha.iloc[i,:]*return_df.iloc[i,:]
     
     total_ret['pnl'] = 0
-    for i in range(1,2590):
+    for i in range(1,len(df)):
         sums=np.sum(total_ret.iloc[i,:].values)
         total_ret['pnl'].iloc[i] = sums
     

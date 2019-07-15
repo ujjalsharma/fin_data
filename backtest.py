@@ -11,39 +11,66 @@ CLOSE = pd.read_csv('data/CLOSE.csv', index_col = 'Date', parse_dates=True)
 VOLUME = pd.read_csv('data/VOLUME.csv', index_col = 'Date', parse_dates=True)
 ADJ_CLOSE = pd.read_csv('data/ADJ_CLOSE.csv', index_col = 'Date', parse_dates=True)
 
+# Neutrilization function
+def neutralize(df):
+    for i in range(len(df)):
+        means = np.mean(df.iloc[i,:].values)
+        df.iloc[i,:] = df.iloc[i,:] - means
 
 # Alpha code
-def alpha(df):
+def alpha(dframe):
+
+    print('Simulation begins...')
+    df = dframe.copy(deep=True)
     df.fillna(0, inplace=True)
     alpha = df.copy(deep=True)
     return_df = df.copy(deep=True)
     total_ret = df.copy(deep=True)
     price_df = CLOSE.copy(deep=True)
     turnover_df = df.copy(deep=True)
-    
+    price_df = price_df.replace(np.inf, np.nan)
+    price_df.fillna(0,inplace=True)
+
     # Calculate value invested each day
+    print('Simulation stage 1...')
     for i in range(len(df)):
         sums=np.sum(alpha.iloc[i,:].values)
         alpha.iloc[i, :] = alpha.iloc[i, :]/sums
+    neutralize(alpha)
     alpha = alpha * 20000000
+    alpha = alpha.replace(np.inf, np.nan)
+    alpha.fillna(0, inplace=True)
     
     #calculating the change in stock price each day
+    print('Simulation stage 2...')
     for i in range(1,len(df)):
         return_df.iloc[i, :] = (price_df.iloc[i, :]-price_df.iloc[i-1, :])/price_df.iloc[i-1, :]
+    return_df = return_df.replace(np.inf, np.nan)
     return_df.fillna(0, inplace=True)
     
     #Calculating trading value each day
+    print('Simulation stage 3...')
     for i in range(1,len(df)):
         turnover_df.iloc[i,:] = alpha.iloc[i,:]-alpha.iloc[i-1,:]
+    turnover_df = turnover_df.replace(np.inf, np.nan)
+    turnover_df.fillna(0, inplace=True)
     
     #Calculating returns for each day
+    print('Simulation stage 4...')
     for i in range(1,len(df)):
         total_ret.iloc[i,:] = return_df.iloc[i,:]*turnover_df.iloc[i,:]
+    total_ret = total_ret.replace(np.inf, np.nan)
+    total_ret.fillna(0, inplace=True)
     
     #Total pnl each day
+    print('Simulation stage 5...')
     total_ret['pnl'] = 0
     for i in range(1,len(df)):
-        sums=np.sum(total_ret.iloc[i,:].values)
-        total_ret['pnl'].iloc[i] = sums
+        sumss=np.sum(total_ret.iloc[i,:].values)
+        total_ret['pnl'].iloc[i] = sumss
+    total_ret = total_ret.replace(np.inf, np.nan)
+    total_ret.fillna(0, inplace=True)
     
+    print('Simulation stage 6...')
     total_ret['pnl'][2:].cumsum().plot()
+    print(np.sum(total_ret['pnl'].values))

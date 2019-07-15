@@ -11,32 +11,6 @@ CLOSE = pd.read_csv('data/CLOSE.csv', index_col = 'Date', parse_dates=True)
 VOLUME = pd.read_csv('data/VOLUME.csv', index_col = 'Date', parse_dates=True)
 ADJ_CLOSE = pd.read_csv('data/ADJ_CLOSE.csv', index_col = 'Date', parse_dates=True)
 
-# Basic operation
-def subtract(df1, df2):
-    dfs = df1.copy(deep=True)
-    for i in range(2590):
-        dfs.iloc[i,:] = df1.iloc[i,:]-df2.iloc[i,:] 
-    return dfs
-
-def add(df1, df2):
-    dfs = df1.copy(deep=True)
-    for i in range(2590):
-        dfs.iloc[i,:] = df1.iloc[i,:]+df2.iloc[i,:]
-    return dfs
-
-def multiply(df1, df2):
-    dfs = df1.copy(deep=True)
-    for i in range(2590):
-        dfs.iloc[i,:] = df1.iloc[i,:]*df2.iloc[i,:]
-    return dfs
-
-def divide(df1, df2):
-    dfs = df1.copy(deep=True)
-    for i in range(2590):
-        dfs.iloc[i,:] = df1.iloc[i,:]/df2.iloc[i,:]
-    return dfs
-
-
 
 # Alpha code
 def alpha(df):

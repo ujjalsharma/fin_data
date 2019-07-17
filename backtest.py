@@ -12,13 +12,36 @@ VOLUME = pd.read_csv('data/VOLUME.csv', index_col = 'Date', parse_dates=True)
 ADJ_CLOSE = pd.read_csv('data/ADJ_CLOSE.csv', index_col = 'Date', parse_dates=True)
 
 # Neutrilization function
-def neutralize(df):
+def neutralize(dframe):
+    df = dframe.copy(deep=True)
+    df.fillna(0, inplace=True)
     for i in range(len(df)):
         means = np.mean(df.iloc[i,:].values)
         df.iloc[i,:] = df.iloc[i,:] - means
+    return df
+
+# Rank function
+def RANK(dframe):
+    df = dframe.copy(deep=True)
+    df.fillna(0, inplace=True)
+    n = len(df.iloc[1, :])
+    stp = 1/(n-1)
+    rank_values = np.arange(0,1,step=stp)
+    rank_values = np.append(rank_values, 1)
+    
+    for i in range(len(df)):
+        temp1 = df.iloc[i, :]
+        temp2 = df.iloc[i, :]
+        for j in range(n):
+            index = temp1.idxmin()
+            temp2[index] = rank_values[j]
+            temp1 = temp1.drop(labels=[index])
+        df.iloc[i, :] = temp2
+    return df
+
 
 # Alpha code
-def alpha(dframe):
+def alfa(dframe):
 
     print('Simulation begins...')
     df = dframe.copy(deep=True)
@@ -36,7 +59,7 @@ def alpha(dframe):
     for i in range(len(df)):
         sums=np.sum(alpha.iloc[i,:].values)
         alpha.iloc[i, :] = alpha.iloc[i, :]/sums
-    neutralize(alpha)
+    alpha = neutralize(alpha)
     alpha = alpha * 20000000
     alpha = alpha.replace(np.inf, np.nan)
     alpha.fillna(0, inplace=True)

@@ -39,6 +39,41 @@ def RANK(dframe):
         df.iloc[i, :] = temp2
     return df
 
+# TS_rank function
+def TS_RANK(dframe, no_of_days):
+    df = dframe.copy(deep=True)
+    df.fillna(0, inplace=True)
+    stp = 1/(no_of_days-1)
+    rank_values = np.arange(0,1,step=stp)
+    rank_values = np.append(rank_values, 1)
+
+    for m in range(len(df.iloc[1,:])):
+        for i in range(no_of_days, len(df)):
+            temp1 = df.iloc[i-no_of_days:i,m]
+            temp2 = df.iloc[i-no_of_days:i,m]
+            for j in range(no_of_days):
+                index = temp1.idxmin()
+                temp2[index] = rank_values[j]
+                temp1 = temp1.drop(labels=[index])
+            df.iloc[i,m] = temp2[:-1]
+    return df
+
+# TS_DELTA function
+def TS_DELTA(dframe, no_of_days):
+    df = dframe.copy(deep=True)
+    df.fillna(0, inplace=True)
+    for i range(no_of_days, len(df)):
+        df.iloc[[i, :] = df.iloc[[i-no_of_days, :]
+    return df
+
+# TS_MEAN function
+def TS_MEAN(dframe, no_of_days):
+    df = dframe.copy(deep=True)
+    df.fillna(0, inplace=True)
+    for i in range(no_of_days, len(df)):
+        means = np.mean(df.iloc[i-no_of_days:i,:].values, axis=0)
+        df.iloc[i,:] = means
+    return df
 
 # Alpha code
 def alfa(dframe):
